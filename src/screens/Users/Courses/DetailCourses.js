@@ -13,20 +13,25 @@ class DetailCourses extends React.Component {
   }
 
   componentDidMount() {
-    const { courseId } = this.props.route.params;
-    console.log(courseId);
-    console.log(`Fetching course details for ID: ${courseId}`);
-    axios
-      .get(
-        `http://192.168.1.178:8080/api/get-detail-courses-by-id?id=${courseId}`
-      )
-      .then((response) => {
-        this.setState({ courses: response.data.data });
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.error("Lỗi khi lấy dữ liệu:", error);
-      });
+    const { route } = this.props;
+    if (route && route.params && route.params.courseId) {
+      const { courseId } = route.params;
+      console.log(courseId);
+      console.log(`Fetching course details for ID: ${courseId}`);
+      axios
+        .get(
+          `http://192.168.1.178:8080/api/get-detail-courses-by-id?id=${courseId}`
+        )
+        .then((response) => {
+          this.setState({ courses: response.data.data });
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error("Lỗi khi lấy dữ liệu:", error);
+        });
+    } else {
+      console.error("No courseId provided");
+    }
   }
 
   render() {

@@ -1,8 +1,8 @@
 import React from "react";
-import { View, Text, StyleSheet, Button, ScrollView } from "react-native";
+import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
 import axios from "axios";
 
-class ProfileUsers extends React.Component {
+class UserCourses extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -11,11 +11,12 @@ class ProfileUsers extends React.Component {
   }
 
   componentDidMount() {
+    const { orderId } = this.props.route.params;
     axios
-      .get(`http://192.168.1.178:8080/api/get-order`)
+      .get(`http://192.168.1.178:8080/api/get-orders-by-id?id=${orderId}`)
       .then((response) => {
-        this.setState({ orders: response.data });
-        console.log(response.data.data);
+        this.setState({ orders: response.data.data });
+        console.log(response.data.data.data);
       })
       .catch((error) => {
         console.error("Lỗi khi lấy dữ liệu:", error);
@@ -24,21 +25,13 @@ class ProfileUsers extends React.Component {
 
   render() {
     const { orders } = this.state;
-    console.log("ORDERS", orders);
+    console.log("ORDERS", courses);
     return (
       <ScrollView>
         <View>
           {orders.map((order) => (
             <View key={order.id}>
-              <Text style={styles.name}>{order.username}</Text>
-              <Button
-                title="Submit"
-                onPress={() =>
-                  this.props.navigation.navigate("DetailCourses", {
-                    orderId: order.id,
-                  })
-                }
-              />
+              <Text style={styles.name}>{order.name}</Text>
             </View>
           ))}
         </View>
@@ -58,4 +51,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProfileUsers;
+export default UserCourses;

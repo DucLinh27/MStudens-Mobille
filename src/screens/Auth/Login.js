@@ -28,14 +28,18 @@ class Login extends Component {
     });
     try {
       let data = await handleLoginApi(this.state.username, this.state.password);
-      if (data && data.errCode !== 0) {
+      console.log("Data:", data.data);
+      if (data.data && data.data.errCode === 0) {
+        Alert.alert("Success", "Login successful"); // Display success message
+        this.props.navigation.navigate("HomeNavigation", {
+          screen: "MSTUDENTS",
+        }); // Navigate to MSTUDENTS
+      } else {
         this.setState({
           errMessage: data.message,
         });
-        Alert.alert("Success", "Login successful"); // Display failure message
-      } else {
-        Alert.alert("Success", data.message);
-        // Display success message
+        console.log(data.message);
+        Alert.alert("Failure", data.message); // Display failure message
       }
     } catch (e) {
       if (e.response) {
@@ -48,9 +52,6 @@ class Login extends Component {
       }
       console.log("error message", e.response);
     }
-  };
-  handleSubmit = (event) => {
-    event.preventDefault();
   };
   render() {
     return (
