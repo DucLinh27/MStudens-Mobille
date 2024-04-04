@@ -3,22 +3,20 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import React, { useEffect } from "react";
 import Database from "./Database";
-import AddScreen from "./src/screens/AddScreen";
-import DetailScreen from "./src/screens/DetailScreen";
-import HomeScreen from "./src/screens/HomeScreen";
-import SearchScreen from "./src/screens/SearchScreen";
-import EditScreen from "./src/screens/EditScreen";
-import CoursesView from "./src/screens/Courses/CoursesView";
-import DetailCourses from "./src/screens/Courses/DetailCourses";
-import ProfileUsers from "./src/screens/ProfileUser/ProfileUsers";
-import Orders from "./src/screens/Orders/Orders";
+import CoursesView from "./src/screens/Users/Courses/CoursesView";
+import DetailCourses from "./src/screens/Users/Courses/DetailCourses";
+import ProfileUsers from "./src/screens/Users/ProfileUser/ProfileUsers";
+import Orders from "./src/screens/Users/Orders/Orders";
+import Login from "./src/screens/Auth/Login";
+import Register from "./src/screens/Auth/Register";
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 const HomeNavigation = () => (
   <Tab.Navigator>
-    <Tab.Screen name="MSTUDENTS" component={CoursesView} />
-    {/* <Tab.Screen name="Add Hike" component={EntryScreen} /> */}
+    {/* <Tab.Screen name="MSTUDENTS" component={CoursesView} /> */}
+    <Tab.Screen name="MSTUDENTS" component={Login} />
+    {/* <Tab.Screen name="MSTUDENTS" component={Register} /> */}
     <Tab.Screen name="Your Profile" component={ProfileUsers} />
   </Tab.Navigator>
 );
@@ -42,8 +40,6 @@ const App = () => {
 
         <Stack.Screen name="Orders" component={Orders} />
         <Stack.Screen name="DetailCourses" component={DetailCourses} />
-        <Stack.Screen name="Edit" component={EditScreen} />
-        <Stack.Screen name="Search" component={SearchScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
