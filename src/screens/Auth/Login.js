@@ -28,12 +28,18 @@ class Login extends Component {
     });
     try {
       let data = await handleLoginApi(this.state.username, this.state.password);
-      console.log("Data:", data.data);
+      if (!data.data || !data.data.user) {
+        throw new Error("Unexpected response structure");
+      }
+      let userIds = data.data.user.id;
+      console.log("Data:", data.data, "UserIds:", userIds);
       if (data.data && data.data.errCode === 0) {
-        Alert.alert("Success", "Login successful"); // Display success message
+        Alert.alert("Success", "Login successful");
         this.props.navigation.navigate("HomeNavigation", {
           screen: "MSTUDENTS",
-        }); // Navigate to MSTUDENTS
+          params: { userId: userIds },
+        });
+        console.log("ProfileUserIds:", userIds);
       } else {
         this.setState({
           errMessage: data.message,

@@ -9,19 +9,36 @@ class ProfileUsers extends React.Component {
       orders: [],
     };
   }
+  async componentDidMount() {
+    try {
+      const { route } = this.props;
+      if (route && route.params && route.params.userId) {
+        const { userId } = route.params;
+        console.log("UserID", userId);
 
-  componentDidMount() {
-    axios
-      .get(`http://192.168.1.178:8080/api/get-order`)
-      .then((response) => {
-        this.setState({ orders: response.data });
-        console.log(response.data.data);
-      })
-      .catch((error) => {
-        console.error("Lỗi khi lấy dữ liệu:", error);
-      });
+        // Fetch orders for the specific user
+        const response = await axios.get(
+          `http://192.168.1.178:8080/api/get-order?userId=${userId}`
+        );
+        console.log("Orders:", response.data);
+
+        const userOrders = response.data.filter(
+          (order) => order.userId === userId
+        );
+        const ordersArray = Array.isArray(userOrders)
+          ? userOrders
+          : Object.values(userOrders);
+
+        this.setState({
+          orders: ordersArray,
+        });
+      } else {
+        console.error("No user ID provided");
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy dữ liệu:", error);
+    }
   }
-
   render() {
     const { orders } = this.state;
     console.log("ORDERS", orders);

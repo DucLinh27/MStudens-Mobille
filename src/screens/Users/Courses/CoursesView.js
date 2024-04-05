@@ -34,7 +34,7 @@ class CoursesView extends React.Component {
             <TouchableOpacity
               key={course.id}
               onPress={() =>
-                this.props.navigation.navigate("HomeNavigation", {
+                this.props.navigation.navigate({
                   screen: "DetailCourses",
                   params: { courseId: course.id },
                 })

@@ -11,9 +11,9 @@ class UserCourses extends React.Component {
   }
 
   componentDidMount() {
-    const { orderId } = this.props.route.params;
+    const { userId } = this.props.route.params; // Get the user ID here
     axios
-      .get(`http://192.168.1.178:8080/api/get-orders-by-id?id=${orderId}`)
+      .get(`http://192.168.1.178:8080/api/get-orders-by-id?id=${userId}`) // Use the user ID here
       .then((response) => {
         this.setState({ orders: response.data.data });
         console.log(response.data.data.data);
@@ -22,7 +22,6 @@ class UserCourses extends React.Component {
         console.error("Lỗi khi lấy dữ liệu:", error);
       });
   }
-
   render() {
     const { orders } = this.state;
     console.log("ORDERS", courses);
