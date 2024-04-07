@@ -10,12 +10,28 @@ import UserCourses from "./src/screens/Users/ProfileUser/UserCourses";
 import Orders from "./src/screens/Users/Orders/Orders";
 import Login from "./src/screens/Auth/Login";
 import Register from "./src/screens/Auth/Register";
+import { Button } from "react-native";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 const HomeNavigation = () => (
   <Tab.Navigator>
-    <Tab.Screen name="MSTUDENTS" component={CoursesView} />
+    <Tab.Screen
+      name="MSTUDENTS"
+      component={CoursesView}
+      options={({ navigation }) => ({
+        headerRight: () => (
+          <Button
+            title="Logout"
+            onPress={() => {
+              // Perform logout operation here
+              // Then navigate to the login screen
+              navigation.navigate("Login");
+            }}
+          />
+        ),
+      })}
+    />
     <Tab.Screen name="Your Profile" component={ProfileUsers} />
   </Tab.Navigator>
 );

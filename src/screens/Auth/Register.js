@@ -3,6 +3,9 @@ import { Button, TextInput, View, Text } from "react-native";
 import createRegisterUserServices from "../../services/userServices";
 import axios from "axios";
 import { Alert } from "react-native";
+import { StyleSheet } from "react-native";
+import { TouchableOpacity } from "react-native";
+
 axios.defaults.timeout = 20000;
 class Register extends Component {
   constructor(props) {
@@ -64,36 +67,73 @@ class Register extends Component {
   render() {
     return (
       <View>
-        <Text>Email:</Text>
+        <Text style={styles.label}>Email:</Text>
         <TextInput
+          style={styles.input}
           placeholder="Email"
           onChangeText={(value) => this.handleInputChange("email", value)}
         />
-        <Text>Password:</Text>
+        <Text style={styles.label}>Password:</Text>
         <TextInput
+          style={styles.input}
           placeholder="Password"
           secureTextEntry
           onChangeText={(value) => this.handleInputChange("password", value)}
         />
-        <Text>FirstName:</Text>
+        <Text style={styles.label}>FirstName:</Text>
         <TextInput
+          style={styles.input}
           placeholder="First Name"
           onChangeText={(value) => this.handleInputChange("firstName", value)}
         />
-        <Text>LastName:</Text>
+        <Text style={styles.label}>LastName:</Text>
         <TextInput
+          style={styles.input}
           placeholder="Last Name"
           onChangeText={(value) => this.handleInputChange("lastName", value)}
         />
-        <Text>Address:</Text>
+        <Text style={styles.label}>Address:</Text>
         <TextInput
+          style={styles.input}
           placeholder="Address"
           onChangeText={(value) => this.handleInputChange("address", value)}
         />
-        <Button title="Register" onPress={this.handleSubmit} />
+        <TouchableOpacity style={styles.button} onPress={this.handleSubmit}>
+          <Text style={styles.buttonText}>Submit</Text>
+        </TouchableOpacity>
       </View>
     );
   }
 }
-
+const styles = StyleSheet.create({
+  label: {
+    fontSize: 20,
+    color: "#333",
+    marginBottom: 15,
+    marginLeft: 10,
+    marginTop: 20,
+  },
+  input: {
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    marginHorizontal: 10,
+    borderRadius: 5,
+  },
+  button: {
+    backgroundColor: "#007BFF",
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    width: "30%",
+    marginLeft: 130,
+    marginTop: 20,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+});
 export default Register;

@@ -3,6 +3,8 @@ import { handleLoginApi } from "../../services/userServices";
 import { Button, TextInput, View } from "react-native";
 import { Text } from "react-native";
 import { Alert } from "react-native";
+import { StyleSheet } from "react-native";
+import { TouchableOpacity } from "react-native";
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -62,25 +64,59 @@ class Login extends Component {
   render() {
     return (
       <View>
-        <Text>Username:</Text>
+        <Text style={styles.label}>Username:</Text>
         <TextInput
+          style={styles.input}
           placeholder="Username"
           onChangeText={(value) =>
             this.handleOnChangeUserName("username", value)
           }
         />
-        <Text>Password:</Text>
+        <Text style={styles.label}>Password:</Text>
         <TextInput
+          style={styles.input}
           placeholder="Password"
           secureTextEntry
           onChangeText={(value) =>
             this.handleOnChangePassword("password", value)
           }
         />
-        <Button title="Submit" onPress={this.handleLogin} />
+        <TouchableOpacity style={styles.button} onPress={this.handleLogin}>
+          <Text style={styles.buttonText}>Submit</Text>
+        </TouchableOpacity>
       </View>
     );
   }
 }
-
+const styles = StyleSheet.create({
+  label: {
+    fontSize: 20,
+    color: "#333",
+    marginBottom: 15,
+    marginLeft: 10,
+    marginTop: 20,
+  },
+  input: {
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    marginHorizontal: 10,
+    borderRadius: 5,
+  },
+  button: {
+    backgroundColor: "#007BFF",
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    width: "30%",
+    marginLeft: 130,
+    marginTop: 20,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+});
 export default Login;
