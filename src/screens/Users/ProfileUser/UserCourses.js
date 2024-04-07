@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
 import axios from "axios";
-
+import { WebView } from "react-native-webview";
 class UserCourses extends React.Component {
   constructor(props) {
     super(props);
@@ -11,12 +11,13 @@ class UserCourses extends React.Component {
   }
 
   componentDidMount() {
-    const { userId } = this.props.route.params; // Get the user ID here
+    const { orderId } = this.props.route.params.orderId; // Get the user ID here
+    console.log("orderId", orderId);
     axios
-      .get(`http://192.168.1.178:8080/api/get-orders-by-id?id=${userId}`) // Use the user ID here
+      .get(`http://192.168.1.178:8080/api/get-orders-by-id?id=${52}`) // Use the user ID here
       .then((response) => {
         this.setState({ orders: response.data.data });
-        console.log(response.data.data.data);
+        console.log("orderId", response.data.data);
       })
       .catch((error) => {
         console.error("Lỗi khi lấy dữ liệu:", error);
@@ -24,13 +25,30 @@ class UserCourses extends React.Component {
   }
   render() {
     const { orders } = this.state;
-    console.log("ORDERS", courses);
+    if (!orders || !orders.courses) {
+      return <Text>Loading...</Text>; // Or some other placeholder
+    }
+    let videoUrls;
+    if (orders && orders.courses && orders.courses.videos) {
+      videoUrls = orders.courses.videos.map((videoObject) => ({
+        url: videoObject.video,
+        name: videoObject.name,
+      }));
+    }
+    console.log("USERVIDEOS", videoUrls);
+    console.log("USERORDERS", orders.courses.videos.name);
     return (
       <ScrollView>
         <View>
-          {orders.map((order) => (
-            <View key={order.id}>
-              <Text style={styles.name}>{order.name}</Text>
+          {videoUrls.map((videoUrl, index) => (
+            <View key={index}>
+              <Text style={styles.name}>{videoUrl.name}</Text>
+              <WebView
+                key={index}
+                style={{ height: 300 }}
+                javaScriptEnabled={true}
+                source={{ uri: videoUrl.url }}
+              />
             </View>
           ))}
         </View>

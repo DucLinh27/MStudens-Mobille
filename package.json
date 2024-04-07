@@ -23,7 +23,12 @@
     "react-native-date-picker": "^4.3.3",
     "react-native-datepicker": "^1.7.2",
     "react-native-dropdown-picker": "^5.4.6",
-    "react-native-radio-buttons-group": "^3.0.5"
+    "react-native-radio-buttons-group": "^3.0.5",
+    "react-native-video": "^5.2.1",
+    "react-native-webview": "^13.8.4",
+    "react-native-youtube-iframe": "^2.3.0",
+    "react-redux": "^9.1.0",
+    "redux": "^5.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

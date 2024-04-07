@@ -1,7 +1,9 @@
 import React from "react";
 import { View, Text, StyleSheet, Button, ScrollView } from "react-native";
 import axios from "axios";
-
+import Video from "react-native-video";
+import Constants from "expo-constants";
+import { Image } from "react-native";
 class ProfileUsers extends React.Component {
   constructor(props) {
     super(props);
@@ -11,30 +13,19 @@ class ProfileUsers extends React.Component {
   }
   async componentDidMount() {
     try {
-      const { route } = this.props;
-      if (route && route.params && route.params.userId) {
-        const { userId } = route.params;
-        console.log("UserID", userId);
+      const userId = 2;
 
-        // Fetch orders for the specific user
-        const response = await axios.get(
-          `http://192.168.1.178:8080/api/get-order?userId=${userId}`
-        );
-        console.log("Orders:", response.data);
-
-        const userOrders = response.data.filter(
-          (order) => order.userId === userId
-        );
-        const ordersArray = Array.isArray(userOrders)
-          ? userOrders
-          : Object.values(userOrders);
-
-        this.setState({
-          orders: ordersArray,
-        });
-      } else {
+      if (!userId) {
         console.error("No user ID provided");
+        return;
       }
+      console.log("UserID", userId);
+      // Fetch orders for the specific user
+      const response = await axios.get(
+        `http://192.168.1.178:8080/api/get-order?userId=${userId}`
+      );
+      console.log("Orders:", response.data);
+      this.setState({ orders: response.data });
     } catch (error) {
       console.error("Lỗi khi lấy dữ liệu:", error);
     }
@@ -48,11 +39,17 @@ class ProfileUsers extends React.Component {
           {orders.map((order) => (
             <View key={order.id}>
               <Text style={styles.name}>{order.username}</Text>
+              <Text style={styles.name}>{order.courses.name}</Text>
+              <Image
+                style={styles.image}
+                source={{ uri: order.courses.image }}
+              />
               <Button
-                title="Submit"
+                title="See Coures"
                 onPress={() =>
-                  this.props.navigation.navigate("DetailCourses", {
-                    orderId: order.id,
+                  this.props.navigation.navigate("UserStacks", {
+                    screen: "UserCourses",
+                    params: { orderId: order.id },
                   })
                 }
               />
@@ -68,6 +65,12 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   image: {
+    fontWeight: "bold",
+    marginBottom: 8,
+    width: "100%",
+    height: 200,
+  },
+  video: {
     fontWeight: "bold",
     marginBottom: 8,
     width: "100%",

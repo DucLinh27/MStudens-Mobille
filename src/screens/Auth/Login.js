@@ -3,7 +3,6 @@ import { handleLoginApi } from "../../services/userServices";
 import { Button, TextInput, View } from "react-native";
 import { Text } from "react-native";
 import { Alert } from "react-native";
-
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -12,6 +11,7 @@ class Login extends Component {
       password: "",
     };
   }
+
   handleOnChangeUserName = (username, value) => {
     this.setState({
       [username]: value,
@@ -36,7 +36,7 @@ class Login extends Component {
       if (data.data && data.data.errCode === 0) {
         Alert.alert("Success", "Login successful");
         this.props.navigation.navigate("HomeNavigation", {
-          screen: "MSTUDENTS",
+          screen: "Mstudents",
           params: { userId: userIds },
         });
         console.log("ProfileUserIds:", userIds);
