@@ -54,12 +54,19 @@ class CoursesView extends React.Component {
 const styles = StyleSheet.create({
   name: {
     flexGrow: 1,
+    fontSize: 20,
+    color: "#333",
+    marginTop: 20,
+    marginLeft: 23,
+    marginBottom: 10,
   },
   image: {
     fontWeight: "bold",
     marginBottom: 8,
-    width: "100%",
+    width: "90%",
     height: 200,
+    borderRadius: 10,
+    marginLeft: 20,
   },
 });
 

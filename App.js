@@ -32,7 +32,7 @@ const HomeNavigation = () => (
         ),
       })}
     />
-    <Tab.Screen name="Your Profile" component={ProfileUsers} />
+    <Tab.Screen name="Your Order" component={ProfileUsers} />
   </Tab.Navigator>
 );
 const CoursesStacks = () => (
@@ -43,7 +43,7 @@ const CoursesStacks = () => (
 );
 const UserStacks = () => (
   <Stack.Navigator>
-    <Stack.Screen name="Your Profile" component={ProfileUsers} />
+    <Stack.Screen name="Your Order" component={ProfileUsers} />
     <Stack.Screen name="UserCourses" component={UserCourses} />
   </Stack.Navigator>
 );

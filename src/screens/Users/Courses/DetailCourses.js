@@ -46,7 +46,7 @@ class DetailCourses extends React.Component {
             <Text style={styles.name}>{courses.description}</Text>
           </View>
         </View>
-        <Button
+        {/* <Button
           style={styles.button}
           title="Buy Now"
           onPress={() =>
@@ -54,7 +54,10 @@ class DetailCourses extends React.Component {
               courses: this.state.courses,
             })
           }
-        />
+        /> */}
+        <TouchableOpacity style={styles.button} onPress={this.handleLogin}>
+          <Text style={styles.buttonText}>Buy Now</Text>
+        </TouchableOpacity>
       </ScrollView>
     );
   }
@@ -62,18 +65,32 @@ class DetailCourses extends React.Component {
 const styles = StyleSheet.create({
   name: {
     flexGrow: 1,
+    fontSize: 20,
+    color: "#333",
+    marginTop: 20,
+    marginLeft: 23,
+    marginBottom: 10,
   },
   image: {
     fontWeight: "bold",
     marginBottom: 8,
-    width: "100%",
+    width: "90%",
     height: 200,
+    borderRadius: 10,
+    marginLeft: 20,
   },
   button: {
-    backgroundColor: "green",
-    padding: 16,
-    borderRadius: 4,
+    backgroundColor: "#007BFF",
+    padding: 10,
+    borderRadius: 5,
     alignItems: "center",
+    width: "30%",
+    marginLeft: 130,
+    marginTop: 20,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
   },
 });
 
