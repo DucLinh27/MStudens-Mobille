@@ -4,6 +4,8 @@ import axios from "axios";
 import { Touchable } from "react-native";
 import { TouchableOpacity } from "react-native";
 import DetailCourses from "./DetailCourses";
+import { BASE_URL } from "@env";
+
 class CoursesView extends React.Component {
   constructor(props) {
     super(props);
@@ -14,7 +16,7 @@ class CoursesView extends React.Component {
 
   componentDidMount() {
     axios
-      .get("http://192.168.1.178:8080/api/get-all-courses")
+      .get(`${BASE_URL}/api/get-all-courses`)
       .then((response) => {
         this.setState({ courses: response.data.data });
         console.log(response.data.data.data);
@@ -26,7 +28,7 @@ class CoursesView extends React.Component {
 
   render() {
     const { courses } = this.state;
-    console.log("CLASSSSSS", courses);
+    console.log("COURSES", courses);
     return (
       <ScrollView>
         <View>
@@ -61,7 +63,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   image: {
-    fontWeight: "bold",
     marginBottom: 8,
     width: "90%",
     height: 200,

@@ -2,6 +2,8 @@ import React from "react";
 import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
 import axios from "axios";
 import { WebView } from "react-native-webview";
+import { BASE_URL } from "@env";
+
 class UserCourses extends React.Component {
   constructor(props) {
     super(props);
@@ -14,7 +16,7 @@ class UserCourses extends React.Component {
     const { orderId } = this.props.route.params.orderId; // Get the user ID here
     console.log("orderId", orderId);
     axios
-      .get(`http://192.168.1.178:8080/api/get-orders-by-id?id=${52}`) // Use the user ID here
+      .get(`${BASE_URL}/api/get-orders-by-id?id=${52}`) // Use the user ID here
       .then((response) => {
         this.setState({ orders: response.data.data });
         console.log("orderId", response.data.data);
@@ -36,7 +38,7 @@ class UserCourses extends React.Component {
       }));
     }
     console.log("USERVIDEOS", videoUrls);
-    console.log("USERORDERS", orders.courses.videos.name);
+
     return (
       <ScrollView>
         <View>
@@ -67,7 +69,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   image: {
-    fontWeight: "bold",
     marginBottom: 8,
     width: "90%",
     height: 200,

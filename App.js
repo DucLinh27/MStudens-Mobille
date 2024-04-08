@@ -41,6 +41,12 @@ const CoursesStacks = () => (
     <Stack.Screen name="DetailCourses" component={DetailCourses} />
   </Stack.Navigator>
 );
+const OrderStacks = () => (
+  <Stack.Navigator>
+    <Stack.Screen name="DetailCourses" component={DetailCourses} />
+    <Stack.Screen name="Orders" component={Orders} />
+  </Stack.Navigator>
+);
 const UserStacks = () => (
   <Stack.Navigator>
     <Stack.Screen name="Your Order" component={ProfileUsers} />
@@ -74,6 +80,11 @@ const RootNavigator = ({ isAuthenticated }) => {
       <Stack.Screen
         name="UserStacks"
         component={UserStacks}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="OrderStacks"
+        component={OrderStacks}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

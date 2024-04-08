@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
 import axios from "axios";
 import { TouchableOpacity } from "react-native";
 import { Button } from "react-native";
+import { BASE_URL } from "@env";
 
 class DetailCourses extends React.Component {
   constructor(props) {
@@ -19,9 +20,7 @@ class DetailCourses extends React.Component {
       console.log(courseId);
       console.log(`Fetching course details for ID: ${courseId}`);
       axios
-        .get(
-          `http://192.168.1.178:8080/api/get-detail-courses-by-id?id=${courseId}`
-        )
+        .get(`${BASE_URL}/api/get-detail-courses-by-id?id=${courseId}`)
         .then((response) => {
           this.setState({ courses: response.data.data });
           console.log(response.data);
@@ -46,16 +45,16 @@ class DetailCourses extends React.Component {
             <Text style={styles.name}>{courses.description}</Text>
           </View>
         </View>
-        {/* <Button
+
+        <TouchableOpacity
           style={styles.button}
-          title="Buy Now"
           onPress={() =>
-            this.props.navigation.navigate("Orders", {
-              courses: this.state.courses,
+            this.props.navigation.navigate("OrderStacks", {
+              screen: "Orders",
+              params: { courses: this.state.courses },
             })
           }
-        /> */}
-        <TouchableOpacity style={styles.button} onPress={this.handleLogin}>
+        >
           <Text style={styles.buttonText}>Buy Now</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -72,7 +71,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   image: {
-    fontWeight: "bold",
     marginBottom: 8,
     width: "90%",
     height: 200,

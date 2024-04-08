@@ -5,7 +5,7 @@ import axios from "axios";
 import { Alert } from "react-native";
 import { StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native";
-
+import { BASE_URL } from "@env";
 axios.defaults.timeout = 20000;
 class Register extends Component {
   constructor(props) {
@@ -26,7 +26,7 @@ class Register extends Component {
   registerNewUser = async (userData) => {
     try {
       const response = await axios.post(
-        "http://192.168.1.178:8080/api/registerNewUser",
+        `${BASE_URL}/api/registerNewUser`,
         userData
       );
       return response;

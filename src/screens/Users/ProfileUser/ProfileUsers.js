@@ -5,6 +5,8 @@ import Video from "react-native-video";
 import Constants from "expo-constants";
 import { Image } from "react-native";
 import { TouchableOpacity } from "react-native";
+import { BASE_URL } from "@env";
+
 class ProfileUsers extends React.Component {
   constructor(props) {
     super(props);
@@ -14,16 +16,13 @@ class ProfileUsers extends React.Component {
   }
   async componentDidMount() {
     try {
-      const userId = 2;
+      const { route } = this.props;
+      const userId =
+        route.userId && route.params.userId ? route.params.userId : null;
 
-      if (!userId) {
-        console.error("No user ID provided");
-        return;
-      }
       console.log("UserID", userId);
-      // Fetch orders for the specific user
       const response = await axios.get(
-        `http://192.168.1.178:8080/api/get-order?userId=${userId}`
+        `${BASE_URL}/api/get-order?userId=${userId}`
       );
       console.log("Orders:", response.data);
       this.setState({ orders: response.data });
@@ -39,12 +38,15 @@ class ProfileUsers extends React.Component {
         <View>
           {orders.map((order) => (
             <View key={order.id}>
-              <Text style={styles.name}>{order.courses.name}</Text>
-              <Image
-                style={styles.image}
-                source={{ uri: order.courses.image }}
-              />
-
+              {order.courses && (
+                <>
+                  <Text style={styles.name}>{order.courses.name}</Text>
+                  <Image
+                    style={styles.image}
+                    source={{ uri: order.courses.image }}
+                  />
+                </>
+              )}
               <TouchableOpacity
                 style={styles.button}
                 onPress={() =>
@@ -73,7 +75,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   image: {
-    fontWeight: "bold",
     marginBottom: 8,
     width: "90%",
     height: 200,

@@ -11,9 +11,9 @@ class Login extends Component {
     this.state = {
       username: "",
       password: "",
+      userId: "",
     };
   }
-
   handleOnChangeUserName = (username, value) => {
     this.setState({
       [username]: value,
@@ -41,6 +41,10 @@ class Login extends Component {
           screen: "Mstudents",
           params: { userId: userIds },
         });
+
+
+        
+        this.setState({ userId: userIds });
         console.log("ProfileUserIds:", userIds);
       } else {
         this.setState({

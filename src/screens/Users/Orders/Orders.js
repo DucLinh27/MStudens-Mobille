@@ -14,6 +14,7 @@ import {
   postStudentOrderCourses,
 } from "../../../services/orderServices";
 import getConfig from "../../../services/paymentServices";
+import { TouchableOpacity } from "react-native";
 class DetailCourses extends React.Component {
   constructor(props) {
     super(props);
@@ -118,25 +119,30 @@ class DetailCourses extends React.Component {
           <View key={courses.id}>
             <Text style={styles.label}>Username:</Text>
             <TextInput
+              style={styles.input}
               value={this.state.username}
               onChangeText={this.handleInputChange}
               placeholder="Enter new Username"
             />
             <Text style={styles.label}>Email:</Text>
             <TextInput
+              style={styles.input}
               value={this.state.email}
               onChangeText={this.handleInputChange}
               placeholder="Enter new Email"
             />
             <Text style={styles.label}>PhoneNumber:</Text>
             <TextInput
+              style={styles.input}
               value={this.state.phonenumber}
               onChangeText={this.handleInputChange}
               placeholder="Enter new order"
             />
             <Text style={styles.label}>Pay ment: PAYPAL</Text>
 
-            <Button title="Submit" onPress={this.handleSubmit} />
+            <TouchableOpacity style={styles.button} onPress={this.handleSubmit}>
+              <Text style={styles.buttonText}>Submit</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
@@ -144,14 +150,34 @@ class DetailCourses extends React.Component {
   }
 }
 const styles = StyleSheet.create({
-  name: {
-    flexGrow: 1,
+  label: {
+    fontSize: 20,
+    color: "#333",
+    marginBottom: 15,
+    marginLeft: 10,
+    marginTop: 20,
   },
-  image: {
-    fontWeight: "bold",
-    marginBottom: 8,
-    width: "100%",
-    height: 200,
+  input: {
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    marginHorizontal: 10,
+    borderRadius: 5,
+  },
+  button: {
+    backgroundColor: "#007BFF",
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    width: "30%",
+    marginLeft: 130,
+    marginTop: 20,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
   },
 });
 
