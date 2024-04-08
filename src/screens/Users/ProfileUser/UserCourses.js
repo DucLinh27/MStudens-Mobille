@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
 import axios from "axios";
 import { WebView } from "react-native-webview";
 import { BASE_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 class UserCourses extends React.Component {
   constructor(props) {
@@ -12,14 +13,14 @@ class UserCourses extends React.Component {
     };
   }
 
-  componentDidMount() {
-    const { orderId } = this.props.route.params.orderId; // Get the user ID here
-    console.log("orderId", orderId);
+  async componentDidMount() {
+    const orderId = parseInt(await AsyncStorage.getItem("orderId"));
+    console.log("orderId from UserCourses", orderId);
     axios
-      .get(`${BASE_URL}/api/get-orders-by-id?id=${52}`) // Use the user ID here
+      .get(`${BASE_URL}/api/get-orders-by-id?id=${orderId}`)
       .then((response) => {
         this.setState({ orders: response.data.data });
-        console.log("orderId", response.data.data);
+        console.log("orders", response.data.data);
       })
       .catch((error) => {
         console.error("Lỗi khi lấy dữ liệu:", error);

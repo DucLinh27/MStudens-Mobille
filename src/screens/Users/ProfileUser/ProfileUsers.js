@@ -6,37 +6,50 @@ import Constants from "expo-constants";
 import { Image } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { BASE_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 class ProfileUsers extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      orders: [],
+      arrOrders: [],
     };
   }
   async componentDidMount() {
     try {
-      const { route } = this.props;
-      const userId =
-        route.userId && route.params.userId ? route.params.userId : null;
+      const userId = parseInt(await AsyncStorage.getItem("userId"));
+      console.log("UserID in profile: ", userId);
 
-      console.log("UserID", userId);
+      let ordersArray;
+
+      // Fetch orders
       const response = await axios.get(
         `${BASE_URL}/api/get-order?userId=${userId}`
       );
       console.log("Orders:", response.data);
-      this.setState({ orders: response.data });
+
+      const userOrders = response.data.filter(
+        (order) => order.userId === userId
+      );
+      console.log("userOrders : ", userOrders);
+
+      ordersArray = Array.isArray(userOrders)
+        ? userOrders
+        : Object.values(userOrders);
+      this.setState({
+        arrOrders: ordersArray,
+      });
     } catch (error) {
       console.error("Lỗi khi lấy dữ liệu:", error);
     }
   }
   render() {
-    const { orders } = this.state;
-    console.log("ORDERS", orders);
+    const { arrOrders } = this.state;
+    // console.log("arrOrders :", arrOrders);
     return (
       <ScrollView>
         <View>
-          {orders.map((order) => (
+          {arrOrders.map((order) => (
             <View key={order.id}>
               {order.courses && (
                 <>
@@ -49,12 +62,21 @@ class ProfileUsers extends React.Component {
               )}
               <TouchableOpacity
                 style={styles.button}
-                onPress={() =>
-                  this.props.navigation.navigate("UserStacks", {
-                    screen: "UserCourses",
-                    params: { orderId: order.id },
-                  })
-                }
+                onPress={async () => {
+                  try {
+                    console.log("ORDERID::", order.id);
+                    this.props.navigation.navigate("UserStacks", {
+                      screen: "UserCourses",
+                      params: { orderId: order.id },
+                    });
+                    this.setState({
+                      orderId: order.id,
+                    });
+                    await AsyncStorage.setItem("orderId", order.id.toString());
+                  } catch (e) {
+                    console.log(e);
+                  }
+                }}
               >
                 <Text style={styles.buttonText}>See Now</Text>
               </TouchableOpacity>

@@ -5,6 +5,7 @@ import { Text } from "react-native";
 import { Alert } from "react-native";
 import { StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -42,8 +43,13 @@ class Login extends Component {
           params: { userId: userIds },
         });
 
+        try {
+          await AsyncStorage.setItem("userId", userIds.toString());
+        } catch (e) {
+          // saving error
+          console.log(e);
+        }
 
-        
         this.setState({ userId: userIds });
         console.log("ProfileUserIds:", userIds);
       } else {
