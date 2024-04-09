@@ -13,7 +13,6 @@ class DetailTeacher extends React.Component {
       teachers: [],
     };
   }
-
   async componentDidMount() {
     const teacherId = parseInt(await AsyncStorage.getItem("teacherId"));
     console.log(`Fetching course details for ID: ${teacherId}`);
@@ -45,6 +44,38 @@ class DetailTeacher extends React.Component {
             <Text style={styles.name}>
               Phone Number: {teachers.phonenumber}{" "}
             </Text>
+            {teachers.Courses && teachers.Courses.length > 0 ? (
+              teachers.Courses.map((course, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.name}
+                  onPress={async () => {
+                    try {
+                      this.props.navigation.navigate("CoursesStacks", {
+                        screen: "DetailCourses",
+                        params: { courseId: course.id },
+                      });
+                      this.setState({
+                        courseId: course.id,
+                      });
+                      await AsyncStorage.setItem(
+                        "courseId",
+                        course.id.toString()
+                      );
+                    } catch (e) {
+                      console.log(e);
+                    }
+                  }}
+                >
+                  <Text style={styles.name}> {course.name} </Text>
+                  <Image style={styles.images} source={{ uri: course.image }} />
+                </TouchableOpacity>
+              ))
+            ) : (
+              <Text style={styles.name}>
+                Không có khóa học của giáo viên này
+              </Text>
+            )}
           </View>
         </View>
       </ScrollView>
@@ -64,6 +95,13 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     width: "90%",
     height: 400,
+    borderRadius: 10,
+    marginLeft: 20,
+  },
+  images: {
+    marginBottom: 10,
+    width: 320,
+    height: 200,
     borderRadius: 10,
     marginLeft: 20,
   },
