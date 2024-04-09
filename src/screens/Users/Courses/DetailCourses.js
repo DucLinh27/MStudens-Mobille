@@ -29,7 +29,6 @@ class DetailCourses extends React.Component {
         console.error("Lỗi khi lấy dữ liệu:", error);
       });
   }
-
   render() {
     const { courses } = this.state;
     console.log("COURSES", courses);

@@ -11,6 +11,8 @@ import Orders from "./src/screens/Users/Orders/Orders";
 import Login from "./src/screens/Auth/Login";
 import Register from "./src/screens/Auth/Register";
 import { Button } from "react-native";
+import Teacher from "./src/screens/Users/Teachers/Teacher";
+import DetailTeacher from "./src/screens/Users/Teachers/DetailTeacher";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -32,6 +34,7 @@ const HomeNavigation = () => (
         ),
       })}
     />
+    <Tab.Screen name="Our  Teacher" component={Teacher} />
     <Tab.Screen name="Your Order" component={ProfileUsers} />
   </Tab.Navigator>
 );
@@ -39,6 +42,12 @@ const CoursesStacks = () => (
   <Stack.Navigator>
     <Stack.Screen name="MSTUDENTS" component={CoursesView} />
     <Stack.Screen name="DetailCourses" component={DetailCourses} />
+  </Stack.Navigator>
+);
+const TeacherStacks = () => (
+  <Stack.Navigator>
+    <Stack.Screen name="Our Teacher" component={Teacher} />
+    <Stack.Screen name="DetailTeacher" component={DetailTeacher} />
   </Stack.Navigator>
 );
 const OrderStacks = () => (
@@ -75,6 +84,11 @@ const RootNavigator = ({ isAuthenticated }) => {
       <Stack.Screen
         name="CoursesStacks"
         component={CoursesStacks}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="TeacherStacks"
+        component={TeacherStacks}
         options={{ headerShown: false }}
       />
       <Stack.Screen

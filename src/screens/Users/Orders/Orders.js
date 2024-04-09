@@ -17,7 +17,7 @@ import getConfig from "../../../services/paymentServices";
 import { TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import PayPal from "react-native-paypal-lib";
-
+import { Picker } from "@react-native-picker/picker";
 class Orders extends React.Component {
   constructor(props) {
     super(props);
@@ -34,12 +34,6 @@ class Orders extends React.Component {
   }
 
   async componentDidMount() {
-    let data = await getConfig();
-    PayPal.initialize(PayPal.NO_NETWORK, data);
-    this.setState({
-      sdkReady: true,
-    });
-    console.log(data);
     const courseId = parseInt(await AsyncStorage.getItem("courseId"));
     console.log(`Fetching course details for ID: ${courseId}`);
     axios
@@ -53,6 +47,13 @@ class Orders extends React.Component {
       .catch((error) => {
         console.error("Lỗi khi lấy dữ liệu:", error);
       });
+    let data = await axios.get(`http://10.25.90.103:8080/payment/config`);
+    PayPal.initialize(PayPal.NO_NETWORK, data.clientId);
+    console.log("data.clientId", data.clientId);
+    this.setState({
+      sdkReady: true,
+    });
+    console.log("dataINIT", data.clientId);
   }
   handleInputChange = (field, value) => {
     this.setState({ [field]: value });
@@ -60,85 +61,97 @@ class Orders extends React.Component {
   };
   handleConfirm = async (event) => {
     event.preventDefault();
-    if (!this.validateInput()) {
-      return;
-    }
     this.setState({ showPaypal: true });
     const orderData = {
       fullName: this.state.username,
       email: this.state.email,
       phoneNumber: this.state.phoneNumber,
     };
-    console.log(orderData);
+    console.log("Orderss", orderData);
 
     // Make payment
     PayPal.paymentRequest({
       currencyCode: "USD", // Currency code
-      amount: this.state.detailCourses.price, // Amount to pay
+      amount: this.state.detailCourses.price.toString(), // Amount to pay
       intent: PayPal.INTENT.SALE, // Sale intent
+      shortDescription: "Course purchase", // Description for the payment
     })
-      .then((confirm) => this.onSuccessPaypal(confirm))
+      .then((response) => this.onSuccessPaypal(response))
       .catch((error) => console.error(error));
   };
+
   addPaypalScript = async () => {
-    let data = await getConfig();
-    let script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src = `https://www.paypal.com/sdk/js?client-id=${data}`;
-    script.async = true;
-    script.onload = () => {
-      this.setState({
-        sdkReady: true,
-      });
-    };
-    document.body.appendChild(script);
-    console.log(data);
-  };
-  addPaypalScript = async () => {
-    let data = await getConfig();
-    PayPal.initialize(PayPal.NO_NETWORK, data);
+    let data = await axios.get(`http://10.25.90.103:8080/payment/config`);
+    PayPal.initialize(PayPal.NO_NETWORK, data.clientId);
     this.setState({
       sdkReady: true,
     });
-    console.log(data);
+    console.log("DataaddPaypalScript", data);
   };
   onSuccessPaypal = async (details, data) => {
+    console.log("Paypal success", details, data);
     const userId = parseInt(await AsyncStorage.getItem("userId"));
     console.log("UserID in Orders: ", userId);
     const orderData = {
       userId,
       username: this.state.username,
       email: this.state.email,
-      phonenumber: this.state.phonenumber,
+      phonenumber: this.state.phoneNumber,
       payment: "PayPal",
       courses: this.state.detailCourses,
       totalPrice: this.state.detailCourses.price,
     };
-    console.log("orderData", orderData);
-    createOrderService(orderData)
+    console.log("orderData", this.state.detailCourses);
+    axios
+      .post(`http://10.25.90.103:8080/api/create-order`, orderData)
       .then(async (response) => {
-        ToastAndroid.show("Order created successfully", ToastAndroid.SHORT);
-        let res = await postStudentOrderCourses({
-          fullName: this.state.username,
-          email: this.state.email,
-          phoneNumber: this.state.phoneNumber,
-        });
+        console.log("Order created successfully");
+        let res = await axios.post(
+          `http://10.25.90.103:8080/api/student-order-courses`,
+          {
+            fullName: this.state.username,
+            email: this.state.email,
+            phoneNumber: this.state.phoneNumber,
+          }
+        );
         if (res && res.errCode === 0) {
-          ToastAndroid.show(
-            "Order a new courses successfully",
-            ToastAndroid.SHORT
-          );
+          console.log("Order a new courses successfully");
+          this.props.navigation.navigate("CoursesView");
         } else {
-          ToastAndroid.show("Order a new courses failed!", ToastAndroid.SHORT);
+          console.log("Order a new courses failed!");
         }
-        this.props.addPurchasedCourse(this.state.detailCourses.id);
       })
       .catch((error) => {
         console.error("Error creating order", error);
         // Handle errors here
       });
   };
+  // validateInput = () => {
+  //   const { username, email, phonenumber } = this.state;
 
+  //   // Check if username is not empty
+  //   if (!username) {
+  //     toast.warning("Username is required");
+  //     return false;
+  //   }
+
+  //   // Check if email is valid
+  //   const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
+  //   if (!emailRegex.test(email)) {
+  //     toast.warning("Email is not valid");
+  //     return false;
+  //   }
+
+  //   // Check if phone number is valid
+  //   const phoneRegex = /^\d{10}$/; // Change this regex to match your country's phone number format
+  //   if (!phoneRegex.test(phonenumber)) {
+  //     toast.warning("Phone number is not valid");
+  //     return false;
+  //   }
+
+  //   // If all checks pass, return true
+  //   return true;
+  // };
   render() {
     const { courses, detailCourses } = this.state;
     console.log("COURSES from Order", courses);
@@ -167,18 +180,30 @@ class Orders extends React.Component {
             <Text style={styles.label}>PhoneNumber:</Text>
             <TextInput
               style={styles.input}
-              value={this.state.phonenumber}
+              value={this.state.phoneNumber}
               onChangeText={(value) =>
-                this.handleInputChange("phonenumber", value)
+                this.handleInputChange("phoneNumber", value)
               }
               placeholder="Enter new order"
             />
-            <Text style={styles.label}>Pay ment: PAYPAL</Text>
+            <Picker
+              selectedValue={this.state.payment}
+              onValueChange={(itemValue) =>
+                this.handleInputChange("payment", itemValue)
+              }
+              style={styles.picker}
+            >
+              <Picker.Item label="PayPal" value="PayPal" />
+            </Picker>
+
             <Text style={styles.label}>{detailCourses.name}</Text>
-            <Text style={styles.label}>Price : {detailCourses.price}</Text>
+            <Text style={styles.label}>Price: {detailCourses.price}</Text>
             <Image style={styles.image} source={{ uri: detailCourses.image }} />
 
-            <TouchableOpacity style={styles.button} onPress={this.handleSubmit}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={this.handleConfirm}
+            >
               <Text style={styles.buttonText}>Submit</Text>
             </TouchableOpacity>
           </View>
@@ -194,6 +219,10 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     marginLeft: 10,
     marginTop: 20,
+  },
+  picker: {
+    height: 120,
+    width: 150,
   },
   image: {
     marginBottom: 8,
