@@ -15,7 +15,7 @@ import {
 } from "../../../services/orderServices";
 import getConfig from "../../../services/paymentServices";
 import { TouchableOpacity } from "react-native";
-class DetailCourses extends React.Component {
+class Orders extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -31,14 +31,16 @@ class DetailCourses extends React.Component {
   }
 
   async componentDidMount() {
-    try {
-      const { courses } = this.props.route.params;
-      console.log(courses);
-      const response = await createOrderService(courses);
-      this.setState({ courses: response.data.data });
-      console.log(response.data.data);
-    } catch (error) {
-      console.error("Lỗi khi lấy dữ liệu:", error);
+    if (!window.paypal) {
+      this.addPaypalScript();
+    } else {
+      this.setState({
+        sdkReady: true,
+      });
+    }
+    if (this.props.location.state) {
+      const { coursePrice, detailCourses } = this.props.location.state;
+      this.setState({ coursePrice, detailCourses });
     }
   }
   handleOnChangeInput = (event, id) => {
@@ -92,7 +94,6 @@ class DetailCourses extends React.Component {
     createOrderService(orderData)
       .then(async (response) => {
         toast.success("Order created successfully", response);
-        this.props.history.push("/payment-return", { orderData });
         let res = await postStudentOrderCourses({
           fullName: this.state.username,
           email: this.state.email,
@@ -181,4 +182,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DetailCourses;
+export default Orders;

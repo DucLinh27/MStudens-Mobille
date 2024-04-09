@@ -20,7 +20,9 @@ class DetailCourses extends React.Component {
       console.log(courseId);
       console.log(`Fetching course details for ID: ${courseId}`);
       axios
-        .get(`${BASE_URL}/api/get-detail-courses-by-id?id=${courseId}`)
+        .get(
+          `http://10.25.90.103:8080/api/get-detail-courses-by-id?id=${courseId}`
+        )
         .then((response) => {
           this.setState({ courses: response.data.data });
           console.log(response.data);
@@ -35,7 +37,7 @@ class DetailCourses extends React.Component {
 
   render() {
     const { courses } = this.state;
-    console.log("CLASSSSSS", courses);
+    console.log("COURSES", courses);
     return (
       <ScrollView>
         <View>
@@ -45,7 +47,6 @@ class DetailCourses extends React.Component {
             <Text style={styles.name}>{courses.description}</Text>
           </View>
         </View>
-
         <TouchableOpacity
           style={styles.button}
           onPress={() =>

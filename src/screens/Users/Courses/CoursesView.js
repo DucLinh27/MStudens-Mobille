@@ -16,7 +16,7 @@ class CoursesView extends React.Component {
 
   componentDidMount() {
     axios
-      .get(`${BASE_URL}/api/get-all-courses`)
+      .get(`http://10.25.90.103:8080/api/get-all-courses`)
       .then((response) => {
         this.setState({ courses: response.data.data });
         console.log(response.data.data.data);

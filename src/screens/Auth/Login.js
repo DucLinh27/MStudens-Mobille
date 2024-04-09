@@ -42,14 +42,11 @@ class Login extends Component {
           screen: "Mstudents",
           params: { userId: userIds },
         });
-
         try {
           await AsyncStorage.setItem("userId", userIds.toString());
         } catch (e) {
-          // saving error
           console.log(e);
         }
-
         this.setState({ userId: userIds });
         console.log("ProfileUserIds:", userIds);
       } else {

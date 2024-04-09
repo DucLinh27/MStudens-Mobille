@@ -26,7 +26,7 @@ class Register extends Component {
   registerNewUser = async (userData) => {
     try {
       const response = await axios.post(
-        `${BASE_URL}/api/registerNewUser`,
+        `http://10.25.90.103:8080/api/registerNewUser`,
         userData
       );
       return response;
