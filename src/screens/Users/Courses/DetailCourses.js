@@ -4,6 +4,7 @@ import axios from "axios";
 import { TouchableOpacity } from "react-native";
 import { Button } from "react-native";
 import { BASE_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 class DetailCourses extends React.Component {
   constructor(props) {
@@ -13,26 +14,20 @@ class DetailCourses extends React.Component {
     };
   }
 
-  componentDidMount() {
-    const { route } = this.props;
-    if (route && route.params && route.params.courseId) {
-      const { courseId } = route.params;
-      console.log(courseId);
-      console.log(`Fetching course details for ID: ${courseId}`);
-      axios
-        .get(
-          `http://10.25.90.103:8080/api/get-detail-courses-by-id?id=${courseId}`
-        )
-        .then((response) => {
-          this.setState({ courses: response.data.data });
-          console.log(response.data);
-        })
-        .catch((error) => {
-          console.error("Lỗi khi lấy dữ liệu:", error);
-        });
-    } else {
-      console.error("No courseId provided");
-    }
+  async componentDidMount() {
+    const courseId = parseInt(await AsyncStorage.getItem("courseId"));
+    console.log(`Fetching course details for ID: ${courseId}`);
+    axios
+      .get(
+        `http://10.25.90.103:8080/api/get-detail-courses-by-id?id=${courseId}`
+      )
+      .then((response) => {
+        this.setState({ courses: response.data.data });
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error("Lỗi khi lấy dữ liệu:", error);
+      });
   }
 
   render() {
@@ -44,17 +39,34 @@ class DetailCourses extends React.Component {
           <View key={courses.id}>
             <Text style={styles.name}>{courses.name}</Text>
             <Image style={styles.image} source={{ uri: courses.image }} />
+            <Text style={styles.name}>Price: {courses.price} $</Text>
+            <Text style={styles.name}>Level: {courses.level}</Text>
+            <Text style={styles.name}>Duration: {courses.duration} hour</Text>
+            <Text style={styles.name}>
+              Number Lesson: {courses.lessons} lessons
+            </Text>
             <Text style={styles.name}>{courses.description}</Text>
           </View>
         </View>
         <TouchableOpacity
           style={styles.button}
-          onPress={() =>
-            this.props.navigation.navigate("OrderStacks", {
-              screen: "Orders",
-              params: { courses: this.state.courses },
-            })
-          }
+          onPress={async () => {
+            try {
+              this.props.navigation.navigate("OrderStacks", {
+                screen: "Orders",
+                params: { courses: this.state.courses },
+              });
+              this.setState({
+                courses: this.state.courses,
+              });
+              await AsyncStorage.setItem(
+                "courses",
+                this.state.courses.toString()
+              );
+            } catch (e) {
+              console.log(e);
+            }
+          }}
         >
           <Text style={styles.buttonText}>Buy Now</Text>
         </TouchableOpacity>

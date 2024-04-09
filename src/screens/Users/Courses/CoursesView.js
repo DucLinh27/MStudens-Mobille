@@ -4,6 +4,7 @@ import axios from "axios";
 import { Touchable } from "react-native";
 import { TouchableOpacity } from "react-native";
 import DetailCourses from "./DetailCourses";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BASE_URL } from "@env";
 
 class CoursesView extends React.Component {
@@ -35,12 +36,20 @@ class CoursesView extends React.Component {
           {courses.map((course) => (
             <TouchableOpacity
               key={course.id}
-              onPress={() =>
-                this.props.navigation.navigate("CoursesStacks", {
-                  screen: "DetailCourses",
-                  params: { courseId: course.id },
-                })
-              }
+              onPress={async () => {
+                try {
+                  this.props.navigation.navigate("CoursesStacks", {
+                    screen: "DetailCourses",
+                    params: { courseId: course.id },
+                  });
+                  this.setState({
+                    courseId: course.id,
+                  });
+                  await AsyncStorage.setItem("courseId", course.id.toString());
+                } catch (e) {
+                  console.log(e);
+                }
+              }}
             >
               <View>
                 <Text style={styles.name}>{course.name}</Text>

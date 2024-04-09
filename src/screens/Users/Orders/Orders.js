@@ -15,6 +15,9 @@ import {
 } from "../../../services/orderServices";
 import getConfig from "../../../services/paymentServices";
 import { TouchableOpacity } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import PayPal from "react-native-paypal-lib";
+
 class Orders extends React.Component {
   constructor(props) {
     super(props);
@@ -31,25 +34,29 @@ class Orders extends React.Component {
   }
 
   async componentDidMount() {
-    if (!window.paypal) {
-      this.addPaypalScript();
-    } else {
-      this.setState({
-        sdkReady: true,
-      });
-    }
-    if (this.props.location.state) {
-      const { coursePrice, detailCourses } = this.props.location.state;
-      this.setState({ coursePrice, detailCourses });
-    }
-  }
-  handleOnChangeInput = (event, id) => {
-    console.log(event.target.value);
-    let stateCopy = { ...this.state };
-    stateCopy[id] = event.target.value;
+    let data = await getConfig();
+    PayPal.initialize(PayPal.NO_NETWORK, data);
     this.setState({
-      ...stateCopy,
+      sdkReady: true,
     });
+    console.log(data);
+    const courseId = parseInt(await AsyncStorage.getItem("courseId"));
+    console.log(`Fetching course details for ID: ${courseId}`);
+    axios
+      .get(
+        `http://10.25.90.103:8080/api/get-detail-courses-by-id?id=${courseId}`
+      )
+      .then((response) => {
+        this.setState({ detailCourses: response.data.data });
+        console.log("ORDERS", response.data.data);
+      })
+      .catch((error) => {
+        console.error("Lỗi khi lấy dữ liệu:", error);
+      });
+  }
+  handleInputChange = (field, value) => {
+    this.setState({ [field]: value });
+    console.log(value);
   };
   handleConfirm = async (event) => {
     event.preventDefault();
@@ -63,6 +70,15 @@ class Orders extends React.Component {
       phoneNumber: this.state.phoneNumber,
     };
     console.log(orderData);
+
+    // Make payment
+    PayPal.paymentRequest({
+      currencyCode: "USD", // Currency code
+      amount: this.state.detailCourses.price, // Amount to pay
+      intent: PayPal.INTENT.SALE, // Sale intent
+    })
+      .then((confirm) => this.onSuccessPaypal(confirm))
+      .catch((error) => console.error(error));
   };
   addPaypalScript = async () => {
     let data = await getConfig();
@@ -78,9 +94,17 @@ class Orders extends React.Component {
     document.body.appendChild(script);
     console.log(data);
   };
+  addPaypalScript = async () => {
+    let data = await getConfig();
+    PayPal.initialize(PayPal.NO_NETWORK, data);
+    this.setState({
+      sdkReady: true,
+    });
+    console.log(data);
+  };
   onSuccessPaypal = async (details, data) => {
-    toast.success("Payment completed successfully", details, data);
-    const userId = this.props.userIdNormal || this.props.userIdGoogle;
+    const userId = parseInt(await AsyncStorage.getItem("userId"));
+    console.log("UserID in Orders: ", userId);
     const orderData = {
       userId,
       username: this.state.username,
@@ -88,21 +112,24 @@ class Orders extends React.Component {
       phonenumber: this.state.phonenumber,
       payment: "PayPal",
       courses: this.state.detailCourses,
-      totalPrice: this.state.coursePrice,
+      totalPrice: this.state.detailCourses.price,
     };
-    console.log(orderData);
+    console.log("orderData", orderData);
     createOrderService(orderData)
       .then(async (response) => {
-        toast.success("Order created successfully", response);
+        ToastAndroid.show("Order created successfully", ToastAndroid.SHORT);
         let res = await postStudentOrderCourses({
           fullName: this.state.username,
           email: this.state.email,
           phoneNumber: this.state.phoneNumber,
         });
         if (res && res.errCode === 0) {
-          toast.success("Order a new courses successfully");
+          ToastAndroid.show(
+            "Order a new courses successfully",
+            ToastAndroid.SHORT
+          );
         } else {
-          toast.error("Order a new courses failed!");
+          ToastAndroid.show("Order a new courses failed!", ToastAndroid.SHORT);
         }
         this.props.addPurchasedCourse(this.state.detailCourses.id);
       })
@@ -111,9 +138,12 @@ class Orders extends React.Component {
         // Handle errors here
       });
   };
+
   render() {
-    const { courses } = this.state;
-    console.log("CLASSSSSS", courses);
+    const { courses, detailCourses } = this.state;
+    console.log("COURSES from Order", courses);
+    console.log("detailCourses", detailCourses);
+
     return (
       <ScrollView>
         <View>
@@ -122,24 +152,31 @@ class Orders extends React.Component {
             <TextInput
               style={styles.input}
               value={this.state.username}
-              onChangeText={this.handleInputChange}
+              onChangeText={(value) =>
+                this.handleInputChange("username", value)
+              }
               placeholder="Enter new Username"
             />
             <Text style={styles.label}>Email:</Text>
             <TextInput
               style={styles.input}
               value={this.state.email}
-              onChangeText={this.handleInputChange}
+              onChangeText={(value) => this.handleInputChange("email", value)}
               placeholder="Enter new Email"
             />
             <Text style={styles.label}>PhoneNumber:</Text>
             <TextInput
               style={styles.input}
               value={this.state.phonenumber}
-              onChangeText={this.handleInputChange}
+              onChangeText={(value) =>
+                this.handleInputChange("phonenumber", value)
+              }
               placeholder="Enter new order"
             />
             <Text style={styles.label}>Pay ment: PAYPAL</Text>
+            <Text style={styles.label}>{detailCourses.name}</Text>
+            <Text style={styles.label}>Price : {detailCourses.price}</Text>
+            <Image style={styles.image} source={{ uri: detailCourses.image }} />
 
             <TouchableOpacity style={styles.button} onPress={this.handleSubmit}>
               <Text style={styles.buttonText}>Submit</Text>
@@ -157,6 +194,13 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     marginLeft: 10,
     marginTop: 20,
+  },
+  image: {
+    marginBottom: 8,
+    width: "90%",
+    height: 200,
+    borderRadius: 10,
+    marginLeft: 20,
   },
   input: {
     height: 40,
