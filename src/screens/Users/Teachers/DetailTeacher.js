@@ -18,7 +18,7 @@ class DetailTeacher extends React.Component {
     console.log(`Fetching course details for ID: ${teacherId}`);
     axios
       .get(
-        `http://10.25.90.103:8080/api/get-detail-teacher-by-id?id=${teacherId}`
+        `http://192.168.1.180:8080/api/get-detail-teacher-by-id?id=${teacherId}`
       )
       .then((response) => {
         this.setState({ teachers: response.data.data });

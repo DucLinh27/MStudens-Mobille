@@ -17,7 +17,7 @@ class Teacher extends React.Component {
 
   componentDidMount() {
     axios
-      .get(`http://10.25.90.103:8080/api/get-all-teachers`)
+      .get(`http://192.168.1.180:8080/api/get-all-teachers`)
       .then((response) => {
         this.setState({ teachers: response.data.data });
         console.log(response.data.data.data);
@@ -55,7 +55,11 @@ class Teacher extends React.Component {
               }}
             >
               <View>
-                <Text style={styles.name}>{teacher.name}</Text>
+                <Text style={styles.name}>
+                  Fullname: {teacher.firstName} {teacher.lastName} {""} Level:{" "}
+                  {teacher.positionId}
+                </Text>
+
                 <Image style={styles.image} source={{ uri: teacher.image }} />
               </View>
             </TouchableOpacity>

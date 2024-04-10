@@ -17,7 +17,7 @@ class UserCourses extends React.Component {
     const orderId = parseInt(await AsyncStorage.getItem("orderId"));
     console.log("orderId from UserCourses", orderId);
     axios
-      .get(`http://10.25.90.103:8080/api/get-orders-by-id?id=${orderId}`)
+      .get(`http://192.168.1.180:8080/api/get-orders-by-id?id=${orderId}`)
       .then((response) => {
         this.setState({ orders: response.data.data });
         console.log("orders", response.data.data);

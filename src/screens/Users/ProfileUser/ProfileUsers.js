@@ -24,7 +24,7 @@ class ProfileUsers extends React.Component {
 
       // Fetch orders
       const response = await axios.get(
-        `http://10.25.90.103:8080/api/get-order?userId=${userId}`
+        `http://192.168.1.180:8080/api/get-order?userId=${userId}`
       );
       console.log("Orders:", response.data);
 

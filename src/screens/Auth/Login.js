@@ -89,7 +89,7 @@ class Login extends Component {
           }
         />
         <TouchableOpacity style={styles.button} onPress={this.handleLogin}>
-          <Text style={styles.buttonText}>Submit</Text>
+          <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
       </View>
     );

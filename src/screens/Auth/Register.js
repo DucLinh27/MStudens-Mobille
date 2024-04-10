@@ -26,13 +26,12 @@ class Register extends Component {
   registerNewUser = async (userData) => {
     try {
       const response = await axios.post(
-        `http://10.25.90.103:8080/api/registerNewUser`,
+        `http://192.168.1.180:8080/api/registerNewUser`,
         userData
       );
       return response;
     } catch (error) {
       console.error("Error during registration:", error);
-
       throw error;
     }
   };
@@ -99,7 +98,7 @@ class Register extends Component {
           onChangeText={(value) => this.handleInputChange("address", value)}
         />
         <TouchableOpacity style={styles.button} onPress={this.handleSubmit}>
-          <Text style={styles.buttonText}>Submit</Text>
+          <Text style={styles.buttonText}>Register</Text>
         </TouchableOpacity>
       </View>
     );

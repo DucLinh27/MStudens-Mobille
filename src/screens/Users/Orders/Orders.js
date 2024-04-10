@@ -103,11 +103,11 @@ class Orders extends React.Component {
     };
     console.log("orderData", this.state.detailCourses);
     axios
-      .post(`http://10.25.90.103:8080/api/create-order`, orderData)
+      .post(`http://192.168.1.180:8080/api/create-order`, orderData)
       .then(async (response) => {
         console.log("Order created successfully");
         let res = await axios.post(
-          `http://10.25.90.103:8080/api/student-order-courses`,
+          `http://192.168.1.180:8080/api/student-order-courses`,
           {
             fullName: this.state.username,
             email: this.state.email,
