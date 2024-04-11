@@ -54,7 +54,7 @@ class Login extends Component {
           errMessage: data.message,
         });
         console.log(data.message);
-        Alert.alert("Failure", data.message); // Display failure message
+        Alert.alert("Failure", "User not found"); // Display failure message
       }
     } catch (e) {
       if (e.response) {

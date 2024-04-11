@@ -66,7 +66,7 @@ class ProfileUsers extends React.Component {
                   try {
                     console.log("ORDERID::", order.id);
                     this.props.navigation.navigate("UserStacks", {
-                      screen: "UserCourses",
+                      screen: "Your Courses",
                       params: { orderId: order.id },
                     });
                     this.setState({

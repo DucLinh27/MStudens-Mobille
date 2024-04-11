@@ -59,7 +59,7 @@ const OrderStacks = () => (
 const UserStacks = () => (
   <Stack.Navigator>
     <Stack.Screen name="Your Order" component={ProfileUsers} />
-    <Stack.Screen name="UserCourses" component={UserCourses} />
+    <Stack.Screen name="Your Courses" component={UserCourses} />
   </Stack.Navigator>
 );
 const UnAuthNavigation = () => (

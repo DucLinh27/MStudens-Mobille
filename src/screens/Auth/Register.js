@@ -39,7 +39,22 @@ class Register extends Component {
   handleSubmit = async (event) => {
     event.preventDefault();
     const { email, password, firstName, lastName, address } = this.state;
-
+    // Validate the fields
+    if (!email || !password || !firstName || !lastName || !address) {
+      Alert.alert("Error", "All fields must be filled");
+      return;
+    }
+    // Validate password length
+    if (password.length < 6) {
+      Alert.alert("Error", "Password must be at least 6 characters");
+      return;
+    }
+    // Validate email format
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      Alert.alert("Error", "Email is not in correct format");
+      return;
+    }
     try {
       const response = await this.registerNewUser({
         email,
@@ -49,13 +64,13 @@ class Register extends Component {
         address,
       });
 
-      console.log(response);
-      if (response.status === 200) {
+      console.log(response.data);
+      if (response.data && response.data.errCode === 0) {
         Alert.alert("Success", "Registration successful");
-        console.log("Success", "Registration successful");
+        console.log("Success", response.data.errCode);
       } else {
         Alert.alert("Failure", "Registration failed");
-        console.log("Failure", "Registration failed");
+        console.log("Failure", response.data.errCode);
       }
     } catch (error) {
       console.error("Error during registration:", error);
