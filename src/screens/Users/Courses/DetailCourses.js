@@ -19,7 +19,7 @@ class DetailCourses extends React.Component {
     console.log(`Fetching course details for ID: ${courseId}`);
     axios
       .get(
-        `http://192.168.1.180:8080/api/get-detail-courses-by-id?id=${courseId}`
+        `http://192.168.1.180.26:8080/api/get-detail-courses-by-id?id=${courseId}`
       )
       .then((response) => {
         this.setState({ courses: response.data.data });

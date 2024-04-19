@@ -6,6 +6,12 @@ import { Alert } from "react-native";
 import { StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+
+GoogleSignin.configure({
+  webClientId:
+    "1052696457949-iefguoppirjrg1q8t2l3ns6epgtu2ggs.apps.googleusercontent.com",
+});
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -15,6 +21,15 @@ class Login extends Component {
       userId: "",
     };
   }
+  signIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      console.log(userInfo);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   handleOnChangeUserName = (username, value) => {
     this.setState({
       [username]: value,
@@ -90,6 +105,9 @@ class Login extends Component {
         />
         <TouchableOpacity style={styles.button} onPress={this.handleLogin}>
           <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={signIn}>
+          <Text>Sign in with Google</Text>
         </TouchableOpacity>
       </View>
     );

@@ -16,8 +16,15 @@ import {
 import getConfig from "../../../services/paymentServices";
 import { TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import PayPal from "react-native-paypal-lib";
+
 import { Picker } from "@react-native-picker/picker";
+// Initialize PayPal with your client id
+// import { PayPal } from "react-native-paypal-wrapper";
+// PayPal.initialize(
+//   PayPal.NO_NETWORK,
+//   "AclsyktkK-QOw-GHnMtuC0E1o2j-GcwgkjCe28yVu2VweLCsuv6HVXeiOAhVyyw7KgFl0CAyEraeAQK3"
+// );
+
 class Orders extends React.Component {
   constructor(props) {
     super(props);
@@ -32,13 +39,16 @@ class Orders extends React.Component {
       detailCourses: "",
     };
   }
-
+  handleInputChange = (field, value) => {
+    this.setState({ [field]: value });
+    console.log(value);
+  };
   async componentDidMount() {
     const courseId = parseInt(await AsyncStorage.getItem("courseId"));
     console.log(`Fetching course details for ID: ${courseId}`);
     axios
       .get(
-        `http://10.25.90.103:8080/api/get-detail-courses-by-id?id=${courseId}`
+        `http://192.168.1.180:8080/api/get-detail-courses-by-id?id=${courseId}`
       )
       .then((response) => {
         this.setState({ detailCourses: response.data.data });
@@ -47,21 +57,10 @@ class Orders extends React.Component {
       .catch((error) => {
         console.error("Lỗi khi lấy dữ liệu:", error);
       });
-    let data = await axios.get(`http://10.25.90.103:8080/payment/config`);
-    PayPal.initialize(PayPal.NO_NETWORK, data.clientId);
-    console.log("data.clientId", data.clientId);
-    this.setState({
-      sdkReady: true,
-    });
-    console.log("dataINIT", data.clientId);
   }
-  handleInputChange = (field, value) => {
-    this.setState({ [field]: value });
-    console.log(value);
-  };
+
   handleConfirm = async (event) => {
     event.preventDefault();
-    this.setState({ showPaypal: true });
     const orderData = {
       fullName: this.state.username,
       email: this.state.email,
@@ -69,25 +68,17 @@ class Orders extends React.Component {
     };
     console.log("Orderss", orderData);
 
-    // Make payment
-    PayPal.paymentRequest({
-      currencyCode: "USD", // Currency code
-      amount: this.state.detailCourses.price.toString(), // Amount to pay
-      intent: PayPal.INTENT.SALE, // Sale intent
-      shortDescription: "Course purchase", // Description for the payment
-    })
-      .then((response) => this.onSuccessPaypal(response))
-      .catch((error) => console.error(error));
+    // Request a payment
+    // PayPal.paymentRequest({
+    //   currency: "USD",
+    //   intent: "Sale",
+    //   price: this.state.detailCourses.price.toString(), // Amount to pay
+    //   description: "Course purchase", // Description for the payment
+    // })
+    //   .then((response) => this.onSuccessPaypal(response))
+    //   .catch((error) => console.error(error));
   };
 
-  addPaypalScript = async () => {
-    let data = await axios.get(`http://10.25.90.103:8080/payment/config`);
-    PayPal.initialize(PayPal.NO_NETWORK, data.clientId);
-    this.setState({
-      sdkReady: true,
-    });
-    console.log("DataaddPaypalScript", data);
-  };
   onSuccessPaypal = async (details, data) => {
     console.log("Paypal success", details, data);
     const userId = parseInt(await AsyncStorage.getItem("userId"));
@@ -103,17 +94,17 @@ class Orders extends React.Component {
     };
     console.log("orderData", this.state.detailCourses);
     axios
-      .post(`http://192.168.1.180:8080/api/create-order`, orderData)
+      .post(`http://10.25.88.26:8080/api/create-order`, orderData)
       .then(async (response) => {
         console.log("Order created successfully");
-        let res = await axios.post(
-          `http://192.168.1.180:8080/api/student-order-courses`,
-          {
-            fullName: this.state.username,
-            email: this.state.email,
-            phoneNumber: this.state.phoneNumber,
-          }
-        );
+        // let res = await axios.post(
+        //   `http://10.25.88.26:8080/api/student-order-courses`,
+        //   {
+        //     fullName: this.state.username,
+        //     email: this.state.email,
+        //     phoneNumber: this.state.phoneNumber,
+        //   }
+        // );
         if (res && res.errCode === 0) {
           console.log("Order a new courses successfully");
           this.props.navigation.navigate("CoursesView");
@@ -123,7 +114,6 @@ class Orders extends React.Component {
       })
       .catch((error) => {
         console.error("Error creating order", error);
-        // Handle errors here
       });
   };
   // validateInput = () => {
@@ -156,7 +146,6 @@ class Orders extends React.Component {
     const { courses, detailCourses } = this.state;
     console.log("COURSES from Order", courses);
     console.log("detailCourses", detailCourses);
-
     return (
       <ScrollView>
         <View>
